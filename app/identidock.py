@@ -3,28 +3,22 @@ import requests
 import hashlib
 import redis
 import html
+import os
 
 app = Flask(__name__)
 cache = redis.StrictRedis(host='redis', port=6379, db=0)
 salt = "UNIQUE_SALT"
-default_name = 'Joe Bloggs'
+name = os.environ['HOSTNAME']
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def mainpage():
-
-    name = default_name
-    if request.method == 'POST':
-        name = html.escape(request.form['name'], quote=True)
 
     salted_name = salt + name
     name_hash = hashlib.sha256(salted_name.encode()).hexdigest()
-    header = '<html><head><title>Identidock</title></head><body>'
-    body = '''<form method="POST">
-              Hello <input type="text" name="name" value="{0}">
-              <input type="submit" value="submit">
-              </form>
-              <p>You look like a:
+    header = '<html><head><title>IdentiOrca</title></head><body>'
+    body = '''<h2>Hello! My name is {0}.</h2>
+              <p/>
               <img src="/monster/{1}"/>
               '''.format(name, name_hash)
     footer = '</body></html>'

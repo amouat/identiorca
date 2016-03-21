@@ -1,17 +1,16 @@
-identidock:
-  build: .
-  ports:
-   - "5000:5000"
-  environment:
-    ENV: DEV 
-  volumes:
-    - ./app:/app
-  links:
-    - dnmonster
-    - redis
+version: "2"
 
-dnmonster:
-  image: amouat/dnmonster:1.0
+services:
 
-redis:
-  image: redis:3.0
+  identiorca:
+    image: amouat/identiorca
+    ports:
+     - "9090"
+
+  dnmonster:
+    image: amouat/dnmonster:1.0
+
+  redis:
+    image: redis:3
+
+  

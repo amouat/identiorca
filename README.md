@@ -1,6 +1,6 @@
-identidock
+IdentiOrca
 ==========
 
-Simple identicon server based on monsterid from Kevin Gaudin.
+Simple application to illustrate container orchestration concepts.
 
-From "Using Docker" by Adrian Mouat published by O'Reilly media.
+Based on the identidock application from "Using Docker" by Adrian Mouat published by O'Reilly media.
