@@ -33,16 +33,17 @@ def mainpage():
     friend_name = '{0} [#{1}]'.format(request.headers.get('User-Agent'), hits)
     friend_hash = hashlib.sha256(friend_name.encode()).hexdigest()
     header = '<html><head><title>IdentiOrca</title></head><body>'
-    body = '''<h2>Hello! My name is {0}.</h2>
-              <p/>
-              <strong><em>I have been seen {1} times.</em></strong>
-              <p/>
-              <img src="/monster/{2}"/>
-              <p/>
-              <strong><em>Also, please meet my random friend, {3}, who wants to talk to you!</em></strong>
-              <p/>
-              <img src="/monster/{3}?no_cache=1"/>
-              '''.format(name, hits, name_hash, friend_hash[:6])
+    body = '''<div style="margin:50px;">
+                <h2>Hello! My name is {0}.</h2>
+                <p/>
+                <strong><em>I have been seen {1} times.</em></strong>
+                <p/>
+                <img src="/monster/{2}"/>
+                <p/>
+                <strong><em>Also, please meet my random friend, {3}, who wants to talk to you!</em></strong>
+                <p/>
+                <img src="/monster/{3}?no_cache=1"/>
+                </div>'''.format(name, hits, name_hash, friend_hash[:6])
     footer = '</body></html>'
 
     return header + body + footer
