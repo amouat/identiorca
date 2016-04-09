@@ -7,6 +7,7 @@ services:
     image: amouat/identiorca
     environment:
      USE_IP_ADDR: "1"
+     #ENV: "DEV"
     ports:
      - "9090"
 
