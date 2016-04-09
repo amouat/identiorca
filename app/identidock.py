@@ -17,6 +17,13 @@ try:
 except KeyError:
   pass
 
+def hit_me(name):
+
+    counter = 'hits-{0}'.format(name)
+    cache.incr(counter)
+
+    return 'I have been seen %i times.' % int(cache.get(counter))
+
 @app.route('/')
 def mainpage():
 
@@ -25,8 +32,10 @@ def mainpage():
     header = '<html><head><title>IdentiOrca</title></head><body>'
     body = '''<h2>Hello! My name is {0}.</h2>
               <p/>
-              <img src="/monster/{1}"/>
-              '''.format(name, name_hash)
+              <strong><em>{1}</em></strong>
+              <p/>
+              <img src="/monster/{2}"/>
+              '''.format(name, hit_me(name), name_hash)
     footer = '</body></html>'
 
     return header + body + footer
