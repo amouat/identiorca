@@ -10,6 +10,12 @@ cache = redis.StrictRedis(host='redis', port=6379, db=0)
 salt = "UNIQUE_SALT"
 name = os.environ['HOSTNAME']
 
+try:
+  os.environ['USE_IP_ADDR']
+  import socket
+  name = socket.gethostbyname(socket.gethostname())
+except KeyError:
+  pass
 
 @app.route('/')
 def mainpage():
