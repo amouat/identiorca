@@ -4,7 +4,7 @@ services:
 
   identiorca:
     hostname: identiorca.weave.local
-    image: amouat/identiorca
+    image: errordeveloper/identiorca
     environment:
      USE_IP_ADDR: "1"
      #ENV: "DEV"
