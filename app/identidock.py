@@ -38,11 +38,11 @@ def mainpage():
                 <p/>
                 <strong><em>I have been seen {1} times.</em></strong>
                 <p/>
-                <img src="/monster/{2}"/>
+                <img src="/monster/{2}" style="width:80px;height:80px;margin:20px;"/>
                 <p/>
                 <strong><em>Also, please meet my random friend, {3}, who wants to talk to you!</em></strong>
                 <p/>
-                <img src="/monster/{3}?no_cache=1"/>
+                <img src="/monster/{3}?no_cache=1" style="width:80px;height:80px;margin:20px;"/>
                 </div>'''.format(name, hits, name_hash, friend_hash[:6])
     footer = '</body></html>'
 
