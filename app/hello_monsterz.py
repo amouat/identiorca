@@ -3,21 +3,17 @@ import requests
 import hashlib
 import redis
 import html
-from os import environ
+from os import getenv
 import sys
+from socket import gethostbyname, gethostname
 
 app = Flask(__name__)
-cache = redis.StrictRedis(host='redis', port=6379, db=0)
 salt = sys.version
 
-# We have a couple options here, default is to use `$HOSTNAME`
-name = environ['HOSTNAME']
-try:
-    environ['USE_IP_ADDR']
-    import socket
-    name = socket.gethostbyname(socket.gethostname())
-except KeyError:
-    pass
+# By default identity is derrived from `$HOSTNAME`
+name = gethostname()
+# However, in some cases IP works better (e.g. when used with Weave Net)
+if getenv('USE_IP_ADDR'): name = gethostbyname(gethostname())
 
 # Count hits in Redis
 def hit_me(name):
@@ -34,6 +30,19 @@ def hex_me(name):
 def friend(request, hits):
     return '{0} [#{1}]'.format(request.headers.get('User-Agent'), hits)
 
+services = {
+    'redis': {
+        'host': getenv('REDIS_HOST', 'redis'),
+        'port': getenv('REDIS_PORT', '6379'),
+    },
+    'monsterz-den': {
+        'host': getenv('MONSTERZ_DEN_HOST', 'monsterz-den'),
+        'port': getenv('MONSTERZ_DEN_PORT', '8080'),
+    },
+}
+
+cache = redis.StrictRedis(db=0, **services['redis'])
+
 @app.route('/')
 def main_page():
 
@@ -47,16 +56,18 @@ def main_page():
 @app.route('/monster/<name>')
 def get_monster(name):
 
+    name = html.escape(name, quote=True)
+    monster = 'http://{host}:{port}/monster/{name}?size=80'.format(name=name, **services['monsterz-den'])
+
     if request.args.get('no_cache') is None:
-        name = html.escape(name, quote=True)
         image = cache.get(name)
         if image is None:
             print('Cache miss', flush=True)
-            r = requests.get('http://monsterz-den:8080/monster/' + name + '?size=80')
+            r = requests.get(monster)
             image = r.content
             cache.set(name, image)
     else:
-        r = requests.get('http://monsterz-den:8080/monster/' + name + '?size=80')
+        r = requests.get(monster)
         image = r.content
 
 
