@@ -1,15 +1,17 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, render_template
 import requests
 import hashlib
 import redis
 import html
 import os
+import sys
 
 app = Flask(__name__)
 cache = redis.StrictRedis(host='redis', port=6379, db=0)
-salt = "UNIQUE_SALT"
-name = os.environ['HOSTNAME']
+salt = sys.version
 
+# We have a couple options here, default is to use `$HOSTNAME`
+name = os.environ['HOSTNAME']
 try:
   os.environ['USE_IP_ADDR']
   import socket
@@ -17,6 +19,7 @@ try:
 except KeyError:
   pass
 
+# Count hits in Redis
 def hit_me(name):
 
     counter = 'hits-{0}'.format(name)
@@ -24,39 +27,31 @@ def hit_me(name):
 
     return int(cache.get(counter))
 
+def hex_me(name):
+  return hashlib.sha256(name.encode()).hexdigest()
+
+# Try to get best match for each visitor
+def friend(request, hits):
+  return '{0} [#{1}]'.format(request.headers.get('User-Agent'), hits)
+
 @app.route('/')
-def mainpage():
+def main_page():
 
     hits = hit_me(name)
-    salted_name = salt + name
-    name_hash = hashlib.sha256(salted_name.encode()).hexdigest()
-    friend_name = '{0} [#{1}]'.format(request.headers.get('User-Agent'), hits)
-    friend_hash = hashlib.sha256(friend_name.encode()).hexdigest()
-    header = '<html><head><title>IdentiOrca</title></head><body>'
-    body = '''<div style="margin:50px;">
-                <h2>Hello! My name is {0}.</h2>
-                <p/>
-                <strong><em>I have been seen {1} times.</em></strong>
-                <p/>
-                <img src="/monster/{2}" style="width:80px;height:80px;margin:20px;"/>
-                <p/>
-                <strong><em>Also, please meet my random friend, {3}, who wants to talk to you!</em></strong>
-                <p/>
-                <img src="/monster/{3}?no_cache=1" style="width:80px;height:80px;margin:20px;"/>
-                </div>'''.format(name, hits, name_hash, friend_hash[:6])
-    footer = '</body></html>'
+    friend_hash = hex_me(friend(request, hits))
 
-    return header + body + footer
-
+    return render_template('index.html', name=name, hits=hits,
+        name_hash=hex_me(salt+name), friend_hash=friend_hash,
+        friend_hash_short=friend_hash[:6])
 
 @app.route('/monster/<name>')
-def get_identicon(name):
+def get_monster(name):
 
     if request.args.get('no_cache') is None:
         name = html.escape(name, quote=True)
         image = cache.get(name)
         if image is None:
-            print ("Cache miss", flush=True)
+            print('Cache miss', flush=True)
             r = requests.get('http://dnmonster:8080/monster/' + name + '?size=80')
             image = r.content
             cache.set(name, image)
