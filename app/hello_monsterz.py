@@ -3,7 +3,7 @@ import requests
 import hashlib
 import redis
 import html
-import os
+from os import environ
 import sys
 
 app = Flask(__name__)
@@ -11,9 +11,9 @@ cache = redis.StrictRedis(host='redis', port=6379, db=0)
 salt = sys.version
 
 # We have a couple options here, default is to use `$HOSTNAME`
-name = os.environ['HOSTNAME']
+name = environ['HOSTNAME']
 try:
-  os.environ['USE_IP_ADDR']
+  environ['USE_IP_ADDR']
   import socket
   name = socket.gethostbyname(socket.gethostname())
 except KeyError:
