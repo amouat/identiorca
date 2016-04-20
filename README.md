@@ -1,5 +1,5 @@
-IdentiOrca
-==========
+Flask frontend of ThePixelMonsterzApp
+=====================================
 
 Simple application to illustrate container orchestration concepts.
 
