@@ -13,11 +13,11 @@ salt = sys.version
 # We have a couple options here, default is to use `$HOSTNAME`
 name = environ['HOSTNAME']
 try:
-  environ['USE_IP_ADDR']
-  import socket
-  name = socket.gethostbyname(socket.gethostname())
+    environ['USE_IP_ADDR']
+    import socket
+    name = socket.gethostbyname(socket.gethostname())
 except KeyError:
-  pass
+    pass
 
 # Count hits in Redis
 def hit_me(name):
@@ -28,11 +28,11 @@ def hit_me(name):
     return int(cache.get(counter))
 
 def hex_me(name):
-  return hashlib.sha256(name.encode()).hexdigest()
+    return hashlib.sha256(name.encode()).hexdigest()
 
 # Try to get best match for each visitor
 def friend(request, hits):
-  return '{0} [#{1}]'.format(request.headers.get('User-Agent'), hits)
+    return '{0} [#{1}]'.format(request.headers.get('User-Agent'), hits)
 
 @app.route('/')
 def main_page():
