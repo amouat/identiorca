@@ -1,4 +1,4 @@
-identidock:
+hello_monsterz:
   build: .
   expose:
    - "9090"
