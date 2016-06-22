@@ -10,9 +10,9 @@ EXPOSE 9090 9191
 USER uwsgi
 
 # Build-time metadata as defined at http://label-schema.org
-ARG BUILD_DATE
-ARG VCS_URL
-ARG VCS_REF
+ARG BUILD_DATE=Unknown
+ARG VCS_URL=Unknown
+ARG VCS_REF=Unknown
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.docker.dockerfile="/Dockerfile" \
       org.label-schema.name="IdentiOrca" \
